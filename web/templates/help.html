@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Help — Comment Spam Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Outfit:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="bg-blob bg-blob-a" aria-hidden="true"></div>
+    <div class="bg-blob bg-blob-b" aria-hidden="true"></div>
+
+    <main class="page page-help">
+      <nav class="page-nav" aria-label="Page">
+        <a class="nav-link" href="/">← Back to classifier</a>
+      </nav>
+
+      <header class="hero">
+        <h1>How this app works</h1>
+        <p class="tagline">
+          A plain-language guide to classifying comments, understanding ham vs spam, and reading
+          your results.
+        </p>
+      </header>
+
+      <section class="card help" aria-labelledby="what-heading">
+        <h2 id="what-heading">What this app does</h2>
+        <p>
+          You paste a short comment—usually the kind posted on video sites—and the app estimates
+          whether it is <strong>ham</strong> (a normal, on-topic message) or <strong>spam</strong>
+          (unwanted promotional or misleading junk). The guess comes from a machine-learning model
+          trained on thousands of real comments that people already labelled as ham or spam.
+        </p>
+        <p>
+          The model does not browse the web or look up your account. It only sees the text you
+          submit and returns a label plus confidence scores for each class.
+        </p>
+      </section>
+
+      <section class="card help" aria-labelledby="ham-spam-heading">
+        <h2 id="ham-spam-heading">Ham vs spam — what’s the difference?</h2>
+        <p>
+          These terms come from email filtering, but they apply to comments too:
+        </p>
+        <ul class="help-list">
+          <li>
+            <strong>Ham</strong> is legitimate content: reactions, questions, praise, criticism,
+            jokes, or conversation that belongs on the thread. It might be short (“lol”) or long,
+            positive or negative—the key is that it is not trying to trick you into clicks, scams,
+            or off-site promotions.
+          </li>
+          <li>
+            <strong>Spam</strong> is unwanted noise, often repeated at scale: “subscribe to my
+            channel,” fake giveaways, phishing links, SEO bait, or copy-pasted ads that have
+            nothing to do with the video. Spam is about manipulation or promotion, not genuine
+            discussion.
+          </li>
+        </ul>
+        <p>
+          The boundary is not always obvious. A comment can mention a product sincerely (ham) or
+          push a link aggressively (spam). Sarcasm, slang, and other languages can confuse any
+          classifier. Treat the output as a <em>probability</em>, not a final verdict.
+        </p>
+      </section>
+
+      <section class="card help" aria-labelledby="pipeline-heading">
+        <h2 id="pipeline-heading">What happens when you click Classify</h2>
+        <ol>
+          <li>
+            <strong>Tokenize</strong> — Your text is split into words and mapped to a fixed
+            vocabulary (the 2,000 most common terms seen during training).
+          </li>
+          <li>
+            <strong>TF-IDF vector</strong> — Each comment becomes a numeric vector: important
+            words in <em>this</em> comment get higher weight; words that appear everywhere get
+            lower weight. The vector is scaled and centered so values sit in a stable range for
+            the network.
+          </li>
+          <li>
+            <strong>Neural network</strong> — A small feed-forward model (one large hidden layer
+            with dropout, then two outputs) estimates the chance of ham vs spam.
+          </li>
+          <li>
+            <strong>Result</strong> — The higher probability wins. The UI shows both percentages
+            so you can see how confident the model is.
+          </li>
+        </ol>
+      </section>
+
+      <section class="card help" aria-labelledby="training-heading">
+        <h2 id="training-heading">Training and “Model ready”</h2>
+        <p>
+          On first launch (or after the saved model is removed), the server trains on labelled
+          YouTube-style comments bundled with the app. Training runs in the background so the
+          home page can load immediately; the status line turns green when the model is ready.
+        </p>
+        <p>
+          A holdout slice of the data is kept back during training to measure accuracy. That
+          percentage on the home page is how well the model did on comments it had not seen
+          during training—not a guarantee on your specific text.
+        </p>
+        <p>
+          After training finishes, weights are saved locally on the server so later starts load
+          in seconds instead of retraining.
+        </p>
+      </section>
+
+      <section class="card help" aria-labelledby="limits-heading">
+        <h2 id="limits-heading">Limitations and responsible use</h2>
+        <ul class="help-list">
+          <li>Works best on short, informal English comments similar to the training set.</li>
+          <li>Can mislabel edgy jokes, quotes, or benign links that look promotional.</li>
+          <li>Should not be the only tool for moderation; humans and policies still matter.</li>
+          <li>Do not paste passwords, private messages, or personal data you would not share publicly.</li>
+        </ul>
+        <p class="fine-print">
+          Example chips on the home page are only shortcuts—you can type any comment you like.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

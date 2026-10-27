@@ -57,6 +57,37 @@ body {
   padding: 2rem 1.25rem 3rem;
 }
 
+.page-help {
+  max-width: 42rem;
+}
+
+.page-nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #c4b5fd;
+  text-decoration: none;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  background: rgba(167, 139, 250, 0.08);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-link:hover {
+  background: rgba(167, 139, 250, 0.18);
+  border-color: rgba(167, 139, 250, 0.55);
+}
+
+.nav-link-help {
+  font-weight: 600;
+}
+
 .hero {
   text-align: center;
   margin-bottom: 1.25rem;
@@ -331,9 +362,14 @@ textarea:focus {
   color: #c4b5fd;
 }
 
-.help ol {
+.help ol,
+.help-list {
   padding-left: 1.25rem;
   margin: 0.35rem 0 0;
+}
+
+.help-list li {
+  margin-bottom: 0.5rem;
 }
 
 .fine-print {

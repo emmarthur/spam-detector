@@ -17,6 +17,10 @@
     <div class="bg-blob bg-blob-b" aria-hidden="true"></div>
 
     <main class="page">
+      <nav class="page-nav" aria-label="Page">
+        <a class="nav-link nav-link-help" href="/help">Help</a>
+      </nav>
+
       <header class="hero">
         <div class="hero-badge" aria-hidden="true">🛡️</div>
         <h1>Spam Detector</h1>
@@ -71,14 +75,6 @@
         </div>
       </section>
 
-      <section class="card help" aria-labelledby="help-heading">
-        <h2 id="help-heading">Help</h2>
-        <p>
-          The model tokenizes your comment, builds a TF-IDF vector (top 2,000 terms), and runs a
-          small dense network trained on labelled YouTube comments. First launch trains once and
-          caches weights under <code>web/data/cache/</code>.
-        </p>
-      </section>
     </main>
 
     <script src="/static/app.js"></script>

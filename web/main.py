@@ -87,6 +87,11 @@ async def index(request: Request) -> HTMLResponse:
     )
 
 
+@app.get("/help", response_class=HTMLResponse)
+async def help_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(request, "help.html")
+
+
 @app.get("/api/status")
 async def api_status() -> JSONResponse:
     if not _pipeline and not _training and _train_error is None:
