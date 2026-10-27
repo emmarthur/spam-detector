@@ -1,3 +1,5 @@
+const SESSION_KEY = "spam-detector-v1";
+
 const statusDot = document.getElementById("status-dot");
 const statusText = document.getElementById("status-text");
 const statusMeta = document.getElementById("status-meta");
@@ -13,6 +15,39 @@ const pctSpam = document.getElementById("pct-spam");
 
 let modelReady = false;
 let pollTimer = null;
+/** @type {{ classification: string, ham: number, spam: number } | null} */
+let lastPrediction = null;
+
+function getSessionPayload() {
+  return { comment: commentInput.value, lastPrediction };
+}
+
+function persistState() {
+  AppSession.save(SESSION_KEY, getSessionPayload());
+}
+
+function applyPrediction(pred) {
+  resultCard.hidden = false;
+  resultClass.textContent = pred.classification.toUpperCase();
+  resultClass.className = "result-class " + pred.classification;
+  barHam.style.width = `${pred.ham}%`;
+  barSpam.style.width = `${pred.spam}%`;
+  pctHam.textContent = `${pred.ham}%`;
+  pctSpam.textContent = `${pred.spam}%`;
+}
+
+function restoreState() {
+  const saved = AppSession.load(SESSION_KEY);
+  if (!saved) return;
+  if (saved.comment != null) commentInput.value = saved.comment;
+  if (saved.lastPrediction) {
+    lastPrediction = saved.lastPrediction;
+    applyPrediction(lastPrediction);
+  }
+}
+
+AppSession.wireHelpSave(SESSION_KEY, getSessionPayload);
+commentInput.addEventListener("input", () => persistState());
 
 function setError(message) {
   if (!message) {
@@ -87,15 +122,13 @@ async function analyze() {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.detail || "Classification failed.");
-    resultCard.hidden = false;
-    resultClass.textContent = data.classification.toUpperCase();
-    resultClass.className = "result-class " + data.classification;
-    const ham = data.probabilities.ham;
-    const spam = data.probabilities.spam;
-    barHam.style.width = `${ham}%`;
-    barSpam.style.width = `${spam}%`;
-    pctHam.textContent = `${ham}%`;
-    pctSpam.textContent = `${spam}%`;
+    lastPrediction = {
+      classification: data.classification,
+      ham: data.probabilities.ham,
+      spam: data.probabilities.spam,
+    };
+    applyPrediction(lastPrediction);
+    persistState();
   } catch (err) {
     setError(err.message || "Classification failed.");
   } finally {
@@ -107,9 +140,11 @@ document.querySelectorAll(".chip").forEach((chip) => {
   chip.addEventListener("click", () => {
     commentInput.value = chip.dataset.text || "";
     commentInput.focus();
+    persistState();
   });
 });
 
 analyzeBtn.addEventListener("click", () => analyze());
 pollTimer = setInterval(pollStatus, 2000);
 pollStatus();
+restoreState();
